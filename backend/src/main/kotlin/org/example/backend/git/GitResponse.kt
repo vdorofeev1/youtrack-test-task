@@ -1,4 +1,6 @@
-package org.example.backend
+package org.example.backend.git
+
+import org.example.backend.git.GitRepository
 
 class GitResponse(val statusCode: Int, val message: String) {
     private var responseBody = listOf<GitRepository>()
