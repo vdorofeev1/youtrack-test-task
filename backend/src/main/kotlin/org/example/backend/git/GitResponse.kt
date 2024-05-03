@@ -1,12 +1,19 @@
 package org.example.backend.git
 
-import org.example.backend.git.GitRepository
 
-class GitResponse(val statusCode: Int, val message: String) {
+class GitResponse(val statusCode: Int) {
     private var responseBody = listOf<GitRepository>()
+    private var message = ""
 
-    fun setBody(body: List<GitRepository>) {
+    fun setMessage(message: String): GitResponse {
+        this.message = message
+        return this
+    }
+    fun getMessage() = message
+
+    fun setBody(body: List<GitRepository>): GitResponse {
         this.responseBody = body
+        return this
     }
     fun getBody() = responseBody
 

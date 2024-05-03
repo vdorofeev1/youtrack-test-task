@@ -10,38 +10,51 @@ import java.net.http.HttpResponse
 @Component
 class GitApiClient {
     private val client = HttpClient.newBuilder().build()
-    private var token: String = System.getenv("GIT_TOKEN")
+    private var token: String = ""
+    private var orgName: String = ""
     private var orgLink: String = ""
-    private var orgName: String = "youtrack-test-org"
-    fun setToken(token: String) {
+    fun setToken(token: String): GitApiClient {
         this.token = token
+        return this
     }
-    fun setLink(link: String) {
+    fun setLink(link: String): GitApiClient {
         this.orgLink = link
+        this.orgName = extractName()
+        return this
     }
 
-    fun repos() {
-
+    fun extractName(): String {
+        return orgLink.split("/").last()
     }
 
-    fun checkLink(): Boolean {
-        return true;
+    fun getReposResponse(): GitResponse {
+        val response = sendRepositoriesRequest()
+        return when (val code = response.statusCode()) {
+            200 -> GitResponse(code).setMessage("good").setBody(getRepositories(response))
+            401 -> GitResponse(code).setMessage("Bad token!")
+            404 -> GitResponse(code).setMessage("Organization not found!")
+            else -> {
+                println(response.body())
+                GitResponse(code).setMessage("Internal error")
+            }
+        }
     }
 
-    fun getRepos(): List<GitRepository> {
-        val gitRepos = ArrayList<GitRepository>()
+    fun sendRepositoriesRequest(): HttpResponse<String> {
         val link = "https://api.github.com/orgs/${orgName}/repos"
         val request = HttpRequest.newBuilder()
             .header("Accept", "application/vnd.github+json")
-            .header("Authorization", "Bearer ${token}")
+            .header("Authorization", "Bearer $token")
             .header("X-GitHub-Api-Version", "2022-11-28")
             .uri(URI.create(link))
             .build()
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        return response
+    }
+    fun getRepositories(response: HttpResponse<String>): List<GitRepository> {
+        val gitRepos = ArrayList<GitRepository>()
         val responseBody = response.body()
-
-        println(response.statusCode())
 
         val repos = JsonParser.parseString(responseBody).asJsonArray
 
@@ -50,13 +63,14 @@ class GitApiClient {
             gitRepos.add(GitRepository(repoName, hasHello(repoName)))
         }
         return gitRepos
+
     }
 
     fun hasHello(repoName: String): Boolean {
         val link = "https://api.github.com/repos/${orgName}/${repoName}/readme"
         val request = HttpRequest.newBuilder()
             .header("Accept", "application/vnd.github.raw+json")
-            .header("Authorization", "Bearer ${token}")
+            .header("Authorization", "Bearer $token")
             .header("X-GitHub-Api-Version", "2022-11-28")
             .uri(URI.create(link))
             .build()
@@ -65,6 +79,8 @@ class GitApiClient {
         val responseBody = response.body()
         return "hello" in responseBody
     }
+
+    fun getBadLinkResponse() = GitResponse(405).setMessage("Bad link!")
 
 
 }
