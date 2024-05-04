@@ -1,7 +1,7 @@
 async function getRepos(organization, token) {
   const organizationValue = organization.value;
   const tokenValue = token.value;
-  const url = `http://localhost:8080/get_repos_with_params?token=${tokenValue}&link=${organizationValue}`;
+  const url = `http://localhost:8080/get_repos?token=${tokenValue}&link=${organizationValue}`;
   try {
     const response = await fetch(url);
     const data = await response.json();

@@ -15,13 +15,6 @@ class BackendController(
 ) {
 
     @GetMapping("/get_repos")
-    fun getRepositories(): GitResponse {
-        val token = System.getenv("GIT_TOKEN")
-        val link = "https://github.com/youtrack-test-org"
-        return service.getRepositories(token, link)
-    }
-
-    @GetMapping("/get_repos_with_params")
     fun getRepositoriesWithParams(@RequestParam("token") token: String, @RequestParam("link") link: String): GitResponse {
         return service.getRepositories(token, link)
     }
