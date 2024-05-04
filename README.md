@@ -7,6 +7,6 @@ Input for the GitHub access token.
 
 ## How to run
 1. Clone repository and contact me to get GitHub token 
-2. `./run.sh`
+2. `/bin/bash run.sh`
 3. Click on the `index.html` file from logs above, it is UI
 4. Pass organization link and token and click on `Go` button
