@@ -5,7 +5,7 @@ async function getRepos(organization, token) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    handleData(data)
+    handleData(data);
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -48,4 +48,4 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("pressed")
     getRepos(organization, token)
   });
-});
+})
