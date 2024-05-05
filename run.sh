@@ -10,7 +10,7 @@ index="$currentDir/frontend/index.html"
 
 cd backend
 
-./gradlew build
+./gradlew assemble
 
 echo "file:///$index"
 
