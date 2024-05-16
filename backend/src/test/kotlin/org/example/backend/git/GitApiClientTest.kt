@@ -29,16 +29,16 @@ class GitApiClientTest {
         client.setToken(TOKEN)
         client.setLink(LINK)
         var response = client.getReposResponse()
-        assertEquals(200, response.statusCode)
+        assertEquals(GitApiClient.SUCCESS_CODE, response.statusCode)
 
         client.setLink("https://github.com/bibabibabiba")
         response = client.getReposResponse()
-        assertEquals(404, response.statusCode)
+        assertEquals(GitApiClient.ORGANIZATION_FOT_FOUND_CODE, response.statusCode)
 
         client.setLink(LINK)
         client.setToken("bibabibabiba")
         response = client.getReposResponse()
-        assertEquals(401, response.statusCode)
+        assertEquals(GitApiClient.BAD_TOKEN_CODE, response.statusCode)
     }
 
     @Test

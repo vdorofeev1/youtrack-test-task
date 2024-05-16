@@ -11,10 +11,10 @@ class BackendServiceTest {
     @Test
     fun getRepositoriesTest() {
         var response = serivce.getRepositories(TOKEN, LINK)
-        assertEquals(200, response.statusCode)
+        assertEquals(GitApiClient.SUCCESS_CODE, response.statusCode)
 
         response = serivce.getRepositories(TOKEN, "htps:/asd")
-        assertEquals(405, response.statusCode)
+        assertEquals(GitApiClient.BAD_LINK_CODE, response.statusCode)
     }
 
     @Test

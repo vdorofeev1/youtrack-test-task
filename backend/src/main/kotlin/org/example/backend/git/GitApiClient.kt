@@ -33,9 +33,9 @@ class GitApiClient {
     fun getReposResponse(): GitResponse {
         val response = sendRepositoriesRequest()
         return when (val code = response.statusCode()) {
-            200 -> GitResponse(code).message("good").body(getRepositories(response))
-            401 -> GitResponse(code).message("Bad token!")
-            404 -> GitResponse(code).message("Organization not found!")
+            SUCCESS_CODE -> GitResponse(code).message("good").body(getRepositories(response))
+            BAD_TOKEN_CODE -> GitResponse(code).message("Bad token!")
+            ORGANIZATION_FOT_FOUND_CODE -> GitResponse(code).message("Organization not found!")
             else -> GitResponse(code).message("Internal error")
         }
     }
@@ -43,9 +43,9 @@ class GitApiClient {
     fun getReposResponseFaster(): GitResponse {
         val response = sendRepositoriesRequest()
         return when (val code = response.statusCode()) {
-            200 -> GitResponse(code).message("good").body(getRepositoriesFaster(response))
-            401 -> GitResponse(code).message("Bad token!")
-            404 -> GitResponse(code).message("Organization not found!")
+            SUCCESS_CODE -> GitResponse(code).message("good").body(getRepositoriesFaster(response))
+            BAD_TOKEN_CODE -> GitResponse(code).message("Bad token!")
+            ORGANIZATION_FOT_FOUND_CODE -> GitResponse(code).message("Organization not found!")
             else -> GitResponse(code).message("Internal error")
         }
     }
@@ -106,6 +106,13 @@ class GitApiClient {
         return GitRepository(repoName, hasHello(repoName))
     }
 
-    fun getBadLinkResponse() = GitResponse(405).message("Bad link!")
+    fun getBadLinkResponse() = GitResponse(BAD_LINK_CODE).message("Bad link!")
+
+    companion object {
+        val SUCCESS_CODE = 200
+        val BAD_TOKEN_CODE = 401
+        val ORGANIZATION_FOT_FOUND_CODE = 404
+        val BAD_LINK_CODE = 405
+    }
 
 }
