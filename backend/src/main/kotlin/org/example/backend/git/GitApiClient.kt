@@ -1,6 +1,9 @@
 package org.example.backend.git
 
 import com.google.gson.JsonParser
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.net.URI
 import java.net.http.HttpClient
@@ -30,13 +33,20 @@ class GitApiClient {
     fun getReposResponse(): GitResponse {
         val response = sendRepositoriesRequest()
         return when (val code = response.statusCode()) {
-            200 -> GitResponse(code).setMessage("good").setBody(getRepositories(response))
-            401 -> GitResponse(code).setMessage("Bad token!")
-            404 -> GitResponse(code).setMessage("Organization not found!")
-            else -> {
-                println(response.body())
-                GitResponse(code).setMessage("Internal error")
-            }
+            200 -> GitResponse(code).message("good").body(getRepositories(response))
+            401 -> GitResponse(code).message("Bad token!")
+            404 -> GitResponse(code).message("Organization not found!")
+            else -> GitResponse(code).message("Internal error")
+        }
+    }
+
+    fun getReposResponseFaster(): GitResponse {
+        val response = sendRepositoriesRequest()
+        return when (val code = response.statusCode()) {
+            200 -> GitResponse(code).message("good").body(getRepositoriesFaster(response))
+            401 -> GitResponse(code).message("Bad token!")
+            404 -> GitResponse(code).message("Organization not found!")
+            else -> GitResponse(code).message("Internal error")
         }
     }
 
@@ -53,17 +63,29 @@ class GitApiClient {
         return response
     }
     fun getRepositories(response: HttpResponse<String>): List<GitRepository> {
-        val gitRepos = ArrayList<GitRepository>()
+        val gitRepos = mutableListOf<GitRepository>()
         val responseBody = response.body()
 
         val repos = JsonParser.parseString(responseBody).asJsonArray
 
         for (repo in repos) {
             val repoName = repo.asJsonObject["name"].asString
-            gitRepos.add(GitRepository(repoName, hasHello(repoName)))
+            gitRepos.add(createGitRepo(repoName))
         }
         return gitRepos
+    }
 
+    fun getRepositoriesFaster(response: HttpResponse<String>): List<GitRepository> = runBlocking {
+        val responseBody = response.body()
+
+        val repos = JsonParser.parseString(responseBody).asJsonArray
+
+        val gitRepos = repos.map {
+            async {
+                createGitRepo(it.asJsonObject["name"].asString)
+            }
+        }
+        return@runBlocking gitRepos.awaitAll()
     }
 
     fun hasHello(repoName: String): Boolean {
@@ -80,7 +102,10 @@ class GitApiClient {
         return "hello" in responseBody
     }
 
-    fun getBadLinkResponse() = GitResponse(405).setMessage("Bad link!")
+    fun createGitRepo(repoName: String): GitRepository {
+        return GitRepository(repoName, hasHello(repoName))
+    }
 
+    fun getBadLinkResponse() = GitResponse(405).message("Bad link!")
 
 }

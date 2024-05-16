@@ -1,8 +1,8 @@
 package org.example.backend.git
 
 import org.junit.jupiter.api.Assertions.*
-
 import org.junit.jupiter.api.Test
+
 
 class GitApiClientTest {
     private val client = GitApiClient()
@@ -53,5 +53,27 @@ class GitApiClientTest {
     fun setLinkTest() {
         client.setLink(LINK)
         assertEquals("youtrack-test-org", client.extractName())
+
+        client.setLink("https://github.com/neapolis-spring2023-cpp")
+        assertEquals("neapolis-spring2023-cpp", client.extractName())
+    }
+
+    @Test
+    fun calculateTime() {
+        client.setToken(TOKEN)
+        client.setLink(LINK)
+
+        var startTime = System.currentTimeMillis()
+        var response = client.getReposResponse()
+        var endTime = System.currentTimeMillis()
+        println("TIME: " + (endTime - startTime))
+
+        startTime = System.currentTimeMillis()
+        response = client.getReposResponseFaster()
+        endTime = System.currentTimeMillis()
+        println("TIME: " + (endTime - startTime))
+
+
+
     }
 }

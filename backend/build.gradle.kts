@@ -21,6 +21,7 @@ dependencies {
 	implementation("com.google.code.gson:gson:2.8.9")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	implementation(kotlin("stdlib-jdk8"))
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
 }
 
 tasks.withType<Test> {
