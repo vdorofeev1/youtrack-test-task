@@ -15,7 +15,7 @@ class BackendController(
 ) {
 
     @GetMapping("/get_repos")
-    fun getRepositoriesWithParams(@RequestParam("token") token: String, @RequestParam("link") link: String): GitResponse {
+    fun getRepositories(@RequestParam("token") token: String, @RequestParam("link") link: String): GitResponse {
         return service.getRepositories(token, link)
     }
 

@@ -4,10 +4,7 @@ import org.example.backend.git.GitApiClient
 import org.example.backend.git.GitResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.net.MalformedURLException
 import java.net.URI
-import java.net.URISyntaxException
-import java.net.URL
 
 
 @Component
@@ -25,11 +22,11 @@ class BackendService(
     }
 
     fun isValidLink(link: String): Boolean {
-        try {
+        return try {
             URI.create(link)
-            return link.startsWith("https://github.com/")
+            link.startsWith("https://github.com/")
         } catch (e: Exception) {
-            return false
+            false
         }
     }
 

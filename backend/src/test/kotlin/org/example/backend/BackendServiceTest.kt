@@ -1,6 +1,5 @@
 package org.example.backend
 
-import org.apache.el.parser.Token
 import org.example.backend.git.GitApiClient
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

@@ -1,4 +1,3 @@
 package org.example.backend.git
 
-data class GitRepository(val name: String, val hasHello: Boolean) {
-}
+data class GitRepository(val name: String, val hasHello: Boolean)
